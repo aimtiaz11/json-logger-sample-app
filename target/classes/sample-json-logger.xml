@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:json-logger="http://www.mulesoft.org/schema/mule/json-logger" xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/json-logger http://www.mulesoft.org/schema/mule/json-logger/current/mule-json-logger.xsd">
+	<http:listener-config name="HTTP_Listener_config" doc:name="HTTP Listener config" doc:id="63e0cc21-7741-4163-86b8-b39156723d69" basePath="/api/v1/log" >
+		<http:listener-connection host="0.0.0.0" port="8081" />
+	</http:listener-config>
+	<json-logger:config name="JSON_Logger_Config" doc:name="JSON Logger Config" doc:id="fc04230c-8fe3-41ff-ab18-59d7785fe716" />
+	
+	<configuration-properties doc:name="Configuration properties" doc:id="7e5cc3d1-c92b-4230-9aa2-aa65afdcb6d5" file="application.properties" />
+	
+	<flow name="sample-json-loggerFlow" doc:id="4ff85dd1-805d-4faf-90aa-04b7c63ca12e" >
+		<http:listener doc:name="Listener" doc:id="2289947f-6c8c-480e-92dc-c37f3a2887f6" config-ref="HTTP_Listener_config" path="/*"/>
+		<flow-ref doc:name="Flow Reference" doc:id="d4d2ede2-ddbe-4497-a2b1-54eb31e4fbc1" name="sample-json-loggerSub_Flow"/>
+	</flow>
+	<sub-flow name="sample-json-loggerSub_Flow" doc:id="927715f2-c56a-4e16-a184-2a2c8654f64d" >
+		<json-logger:logger doc:name="Logger" doc:id="860d164e-ba03-460a-91a9-27d2755e1986" config-ref="JSON_Logger_Config">
+			<json-logger:content><![CDATA[#[output application/json 
+---
+{
+ 	payload: payload,
+ 	attributes: attributes
+}]]]></json-logger:content>
+		</json-logger:logger>
+	</sub-flow>
+</mule>
